@@ -73,6 +73,7 @@
     <Compile Include="BindSystem\BindListCommand.cs" />
     <Compile Include="BindSystem\BindManager.cs" />
     <Compile Include="BindSystem\BindClearCommand.cs" />
+    <Compile Include="BindSystem\BindModifyCommand.cs" />
     <Compile Include="BindSystem\CommandConsolePatch.cs" />
     <Compile Include="ConsoleHelper.cs" />
     <Compile Include="Plugin.cs" />

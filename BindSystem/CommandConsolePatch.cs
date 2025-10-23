@@ -21,7 +21,7 @@ public static class CommandConsolePatch
         {
             if (args.Length == 0)
             {
-                ConsoleHelper.AddMessage("Usage: add <key> <command> | clear <key> | list");
+                ConsoleHelper.AddMessage("Usage: add | clear | list | modify");
 
                 return;
             }
@@ -40,8 +40,11 @@ public static class CommandConsolePatch
                 case "list":
                     BindListCommand.Execute(subArgs);
                     break;
+                case "modify":
+                    BindModifyCommand.Execute(subArgs);
+                    break;
                 default:
-                    ConsoleHelper.AddMessage("Unknown bind subcommand. Use: add, clear, list");
+                    ConsoleHelper.AddMessage("Unknown bind subcommand. Use: add | clear | list | modify");
                     break;
             }
         };
