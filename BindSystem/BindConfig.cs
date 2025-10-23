@@ -4,6 +4,6 @@ using System.Collections.Generic;
 [Serializable]
 public class BindConfig
 {
-    public Dictionary<string, string> Binds = new Dictionary<string, string>();
+    public Dictionary<string, string[]> Binds { get; set; } = new Dictionary<string, string[]>();
 }
 

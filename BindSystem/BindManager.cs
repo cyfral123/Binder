@@ -1,5 +1,6 @@
 ﻿using BepInEx;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -7,37 +8,39 @@ using UnityEngine;
 
 public static class BindManager
 {
-    private static Dictionary<KeyCode, string> keyBinds = new Dictionary<KeyCode, string>();
+    private static Dictionary<KeyCode, string[]> binds = new Dictionary<KeyCode, string[]>();
+    private static readonly string configPath = Path.Combine(Paths.ConfigPath, "binder_binds.json");
 
-    private static string configPath = Path.Combine(Paths.ConfigPath, "binder_binds.json");
-
-    public static void AddBind(KeyCode key, string command)
+    public static void AddBind(KeyCode key, string[] commands)
     {
-        keyBinds[key] = command;
+        binds[key] = commands;
         SaveBinds();
     }
 
     public static bool RemoveBind(KeyCode key)
     {
-        bool result = keyBinds.Remove(key);
+        bool result = binds.Remove(key);
         if (result)
             SaveBinds();
         return result;
     }
 
-    public static IReadOnlyDictionary<KeyCode, string> GetAllBinds()
+    public static IReadOnlyDictionary<KeyCode, string[]> GetAllBinds()
     {
-        return keyBinds;
+        return binds;
     }
 
     public static void CheckInput()
     {
-        foreach (var bind in keyBinds)
+        foreach (var bind in binds)
         {
             if (Input.GetKeyDown(bind.Key))
             {
                 Utils.EnableCheatsSilently();
-                CommandConsole.instance.ExecuteCommand(bind.Value);
+                foreach (var cmd in bind.Value)
+                {
+                    CommandConsole.instance.ExecuteCommand(cmd);
+                }
             }
         }
     }
@@ -52,23 +55,41 @@ public static class BindManager
             string json = File.ReadAllText(configPath);
             if (string.IsNullOrEmpty(json))
                 return;
-            var loaded = JsonConvert.DeserializeObject<BindConfig>(json);
-            if (loaded?.Binds == null)
+
+            JObject root = JObject.Parse(json);
+            var bindsToken = root["Binds"];
+            if (bindsToken == null)
                 return;
 
-            keyBinds.Clear();
+            binds.Clear();
+            bool convertedOldFormat = false;
 
-            foreach (var pair in loaded.Binds)
+            foreach (var pair in bindsToken.Children<JProperty>())
             {
-                if (Enum.TryParse(pair.Key, out KeyCode key))
+                if (!Enum.TryParse(pair.Name, true, out KeyCode key))
+                    continue;
+
+                JToken value = pair.Value;
+                if (value.Type == JTokenType.String)
                 {
-                    keyBinds[key] = pair.Value;
+                    binds[key] = new string[] { value.ToString() };
+                    convertedOldFormat = true;
                 }
+                else if (value.Type == JTokenType.Array)
+                {
+                    binds[key] = value.ToObject<string[]>();
+                }
+            }
+
+            if (convertedOldFormat)
+            {
+                Debug.Log("Binder: Converted old bind format to new version.");
+                SaveBinds();
             }
         }
         catch (Exception ex)
         {
-            UnityEngine.Debug.LogError($"Binder: Failed to load binds: {ex}");
+            Debug.LogError($"Binder: Failed to load binds: {ex}");
         }
     }
 
@@ -78,9 +99,9 @@ public static class BindManager
         {
             var config = new BindConfig();
 
-            foreach (var pair in keyBinds)
+            foreach (var bind in binds)
             {
-                config.Binds[pair.Key.ToString()] = pair.Value;
+                config.Binds[bind.Key.ToString()] = bind.Value;
             }
 
             string json = JsonConvert.SerializeObject(config, Formatting.Indented);
@@ -88,7 +109,7 @@ public static class BindManager
         }
         catch (Exception ex)
         {
-            UnityEngine.Debug.LogError($"Binder: Failed to save binds: {ex}");
+            Debug.LogError($"Binder: Failed to save binds: {ex}");
         }
     }
 }

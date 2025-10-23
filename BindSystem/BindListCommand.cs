@@ -11,9 +11,10 @@ public static class BindListCommand
             return;
         }
 
-        foreach (var pair in binds)
+        foreach (var bind in binds)
         {
-            ConsoleHelper.AddMessage($"{pair.Key}: {pair.Value}");
+            string joined = string.Join(", ", bind.Value);
+            ConsoleHelper.AddMessage($"{bind.Key} -> {joined}");
         }
     }
 }
