@@ -1,22 +1,22 @@
 ﻿using System;
 using UnityEngine;
 
-public static class BindRemoveCommand
+public static class BindClearCommand
 {
     public static void Execute(string[] args)
     {
         if (args.Length < 1)
         {
-            ConsoleHelper.AddMessage("Usage: bind remove <key>");
+            ConsoleHelper.AddMessage("Usage: bind clear <key>");
             return;
         }
 
         try
         {
             KeyCode key = (KeyCode)Enum.Parse(typeof(KeyCode), args[0], true);
-            if (BindManager.RemoveBind(key))
+            if (BindManager.ClearBind(key))
             {
-                ConsoleHelper.AddMessage($"Removed bind for key [{key}]");
+                ConsoleHelper.AddMessage($"All binds on the key [{key}] are cleared");
             }
             else
             {

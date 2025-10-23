@@ -21,7 +21,7 @@ public static class CommandConsolePatch
         {
             if (args.Length == 0)
             {
-                ConsoleHelper.AddMessage("Usage: add <key> <command> | remove <key> | list");
+                ConsoleHelper.AddMessage("Usage: add <key> <command> | clear <key> | list");
 
                 return;
             }
@@ -34,14 +34,14 @@ public static class CommandConsolePatch
                 case "add":
                     BindAddCommand.Execute(subArgs);
                     break;
-                case "remove":
-                    BindRemoveCommand.Execute(subArgs);
+                case "clear":
+                    BindClearCommand.Execute(subArgs);
                     break;
                 case "list":
                     BindListCommand.Execute(subArgs);
                     break;
                 default:
-                    ConsoleHelper.AddMessage("Unknown bind subcommand. Use: add, remove, list");
+                    ConsoleHelper.AddMessage("Unknown bind subcommand. Use: add, clear, list");
                     break;
             }
         };

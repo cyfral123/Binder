@@ -17,7 +17,7 @@ public static class BindManager
         SaveBinds();
     }
 
-    public static bool RemoveBind(KeyCode key)
+    public static bool ClearBind(KeyCode key)
     {
         bool result = binds.Remove(key);
         if (result)
