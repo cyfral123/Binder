@@ -2,6 +2,11 @@
 using System;
 using System.Reflection;
 
+public static class SilentLogController
+{
+    public static bool SuppressLogging = false;
+}
+
 [HarmonyPatch(typeof(CommandConsole), "Awake")]
 public static class CommandConsolePatch
 {
@@ -66,5 +71,19 @@ public static class ENT_Player_LateUpdate_Patch
         {
             BindManager.CheckInput();
         }
+    }
+}
+
+[HarmonyPatch(typeof(CommandConsole))]
+public static class CommandConsole_Log_Patch
+{
+    [HarmonyPrefix]
+    [HarmonyPatch("Log")]
+    public static bool Prefix_Log(ref string message)
+    {
+        if (SilentLogController.SuppressLogging)
+            return false;
+
+        return true;
     }
 }

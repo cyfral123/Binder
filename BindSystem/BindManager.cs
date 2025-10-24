@@ -39,7 +39,7 @@ public static class BindManager
                 ConsoleHelper.EnableCheatsSilently();
                 foreach (var cmd in bind.Value)
                 {
-                    CommandConsole.instance.ExecuteCommand(cmd);
+                    ConsoleHelper.ExecuteCommandSilenty(cmd);
                 }
             }
         }
