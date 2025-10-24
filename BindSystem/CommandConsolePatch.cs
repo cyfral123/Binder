@@ -1,6 +1,7 @@
 ﻿using HarmonyLib;
 using System;
 using System.Reflection;
+using UnityEngine;
 
 public static class SilentLogController
 {
@@ -82,7 +83,10 @@ public static class CommandConsole_Log_Patch
     public static bool Prefix_Log(ref string message)
     {
         if (SilentLogController.SuppressLogging)
+        {
+            Debug.Log($"Binder: Suppressed log message: {message}");
             return false;
+        }
 
         return true;
     }
