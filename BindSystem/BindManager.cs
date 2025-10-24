@@ -36,7 +36,7 @@ public static class BindManager
         {
             if (Input.GetKeyDown(bind.Key))
             {
-                Utils.EnableCheatsSilently();
+                ConsoleHelper.EnableCheatsSilently();
                 foreach (var cmd in bind.Value)
                 {
                     CommandConsole.instance.ExecuteCommand(cmd);

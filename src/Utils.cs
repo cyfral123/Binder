@@ -14,21 +14,4 @@ public class Utils
         Array.Copy(data, index, result, 0, length);
         return result;
     }
-
-    public static void EnableCheatsSilently()
-    {
-        AccessTools.Field(typeof(CommandConsole), "cheatsEnabled")?.SetValue(null, true);
-        AccessTools.Field(typeof(CommandConsole), "hasCheated")?.SetValue(null, true);
-
-        var uiManagerType = typeof(CL_UIManager);
-        var instanceField = AccessTools.Field(uiManagerType, "instance");
-        var instance = instanceField?.GetValue(null);
-
-        if (instance != null)
-        {
-            var cheatTrackerField = AccessTools.Field(uiManagerType, "cheatTracker");
-            var tracker = cheatTrackerField?.GetValue(instance) as GameObject;
-            tracker?.SetActive(true);
-        }
-    }
 }
